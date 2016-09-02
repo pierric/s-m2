@@ -1,13 +1,24 @@
 package org.recursive
 
+import android.util.Log
 import Utility.Result
 
-class Creature(m2model: M2Model, val skins: Array[Creature.Skin], val renderer: ModelRenderer) {
+class Creature(m2model: M2Model, skins: Array[Creature.Skin], renderer: ModelRenderer) {
   def setSkin(index: Int): Unit = {
+    Log.d("CRAT", "set skin " + index.toString + " " + skins(index)(11).toString)
     renderer.setReplaceableTextures(skins(index))
   }
   def setAnim(index: Int): Unit = {
     renderer.setAnimation(index)
+  }
+  def skinList(): Array[String] = {
+    skins.map((sl:Creature.Skin) => sl.flatten.head)
+  }
+  def numAnim(): Int = {
+    m2model.anims.size
+  }
+  def getRenderer(): ModelRenderer = {
+    renderer
   }
 }
 
@@ -22,6 +33,7 @@ object Creature {
   }
 
   def generateSkinList(path: String, database: Database): Array[Skin] = {
+    //Log.d("CRAT", "generate skin list")
     def matchpath(s: String): Boolean = String.CASE_INSENSITIVE_ORDER.compare(s, path + ".mdx") == 0
     def blppath(s: String): Option[String] = {
       if (s.isEmpty)
@@ -31,6 +43,15 @@ object Creature {
         cs.update(cs.length-1, s)
         Some("MPQ:" + cs.mkString("\\") + ".blp")
       }
+    }
+    def sortSkin(s1: Skin, s2: Skin) : Boolean = {
+      for ((a,b) <- s1 zip s2) {
+        if (Ordering.Option[String].lt(a,b))
+          return true
+        if (Ordering.Option[String].gt(a,b))
+          return false
+      }
+      return false
     }
     val ss = database.creatureModelDB.records.toList
       .filter(_.getString(CreatureModelDB.CreatureModelFilename).map(matchpath).getOrElse(false))
@@ -51,14 +72,14 @@ object Creature {
             .toSet
         }
         else
-          Set.empty
+          Set.empty[(String,String,String)]
       }
-    (ss.foldLeft(Set.empty[(String,String,String)])(_ ++ _) map { (s: (String,String,String)) =>
+    (ss.foldLeft(Set.empty[(String,String,String)])(_ union _) map { (s: (String,String,String)) =>
       val a: Skin = Array.tabulate(14)(n => None)
       a(11) = blppath(s._1)
       a(12) = blppath(s._2)
       a(13) = blppath(s._3)
       a
-    }).toArray
+    }).toArray.sortWith(sortSkin)
   }
 }

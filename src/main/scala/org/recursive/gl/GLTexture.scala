@@ -45,7 +45,6 @@ class GLTexture(target: GLTexture.Target.Value, blp: BLP) {
 
   private def dxtImage(typ: CTYPE.Value, width: Int, height: Int, raw: Array[BitVector]) = {
     var l = 0; var w = width; var h = height
-//    val r = raw(0)
     for (r <- raw) {
       val pixels = typ match {
         case CTYPE.DXT1 => DXT.DDSDecompressDXT1(r, w, h)
@@ -67,7 +66,7 @@ object GLTexture {
   def findTexture(fs: FileSystem, path: String): Option[GLTexture] = {
     textures.get(path) match {
       case None =>
-        Log.d("TMGR", path)
+        Log.d("TMGR", "no hit, will load" + path)
         BLP.open(fs, path).map(blp => new GLTexture(GLTexture.Target.Texture2D, blp)).toOption match {
           case None => None
           case Some(t) =>
@@ -79,6 +78,7 @@ object GLTexture {
     }
   }
   def clear(): Unit = {
+    Log.d("TMGR", "clear all")
     textures.clear()
   }
 }
