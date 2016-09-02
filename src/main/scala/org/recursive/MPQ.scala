@@ -1,4 +1,4 @@
-package org.example
+package org.recursive
 
 import scodec.bits._
 import scodec.codecs._

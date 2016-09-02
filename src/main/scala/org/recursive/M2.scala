@@ -1,4 +1,4 @@
-package org.example
+package org.recursive
 
 import java.util.concurrent.{ScheduledThreadPoolExecutor, TimeUnit}
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger}

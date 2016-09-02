@@ -1,4 +1,4 @@
-package org.example
+package org.recursive
 
 import scodec.bits.BitVector
 import scodec.{Attempt, DecodeResult, Decoder}

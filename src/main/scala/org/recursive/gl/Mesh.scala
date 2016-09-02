@@ -1,9 +1,9 @@
-package org.example.gl
+package org.recursive.gl
 
 import java.nio.{ByteBuffer, ByteOrder}
 
 import android.opengl.GLES10
-import org.example._
+import org.recursive._
 import Utility._
 import android.util.Log
 

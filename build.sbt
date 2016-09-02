@@ -1,4 +1,6 @@
-androidBuild
+androidBuildAar
+
+scalaVersion := "2.11.8"
 
 scalacOptions := Seq(
   "-feature",
@@ -9,6 +11,8 @@ scalacOptions := Seq(
 javacOptions in Compile ++= "-source" :: "1.7" :: "-target" :: "1.7" :: Nil
 
 name := "s-m2"
+organization := "org.recursive"
+version := "0.1-SNAPSHOT"
 
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
@@ -16,10 +20,10 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  aar("org.macroid" %% "macroid" % "2.0.0-20150427"),
   "org.scodec" %% "scodec-bits" % "1.1.0",
   "org.scodec" %% "scodec-core" % "1.10.0",
   "commons-io" % "commons-io" % "2.5",
+  "org.scala-lang.modules" %% "scala-xml" % "1.0.5",
   "org.scalactic" %% "scalactic" % "2.2.6",
   "org.scalatest" %% "scalatest" % "2.2.6" % "test"
 )
@@ -29,13 +33,6 @@ libraryDependencies ++= {
   else Nil
 }
 
-//debugIncludesTests in Android := true
-//libraryDependencies ++= Seq(
-//    "com.android.support.test" % "runner" % "0.2",
-//    "com.android.support.test.espresso" % "espresso-core" % "2.1")
-//instrumentTestRunner in Android :=
-//  "android.support.test.runner.AndroidJUnitRunner"
-
-testOptions in Test += Tests.Argument("-oF")
+publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
 
 proguardScala in Android := true

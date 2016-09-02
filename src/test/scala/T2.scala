@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 
 import org.scalatest.{FlatSpec, Matchers}
-import org.example._
+import org.recursive._
 
 class T2 extends FlatSpec with Matchers {
   val mpq = MockMPQ("src/test/res/res")

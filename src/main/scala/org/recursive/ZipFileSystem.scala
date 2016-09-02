@@ -1,4 +1,4 @@
-package org.example
+package org.recursive
 
 import java.io.{File, FileInputStream, FileOutputStream, IOException}
 import java.util.zip.ZipInputStream

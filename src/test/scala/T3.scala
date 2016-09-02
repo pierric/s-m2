@@ -1,5 +1,5 @@
 import org.scalatest.{FlatSpec, Matchers}
-import org.example._
+import org.recursive._
 
 class T3 extends FlatSpec with Matchers {
   val fs = MockMPQ("src/test/res/res")

@@ -1,7 +1,7 @@
 import java.io.{File, FileInputStream}
 
-import org.example._
-import org.example.Utility._
+import org.recursive._
+import org.recursive.Utility._
 import org.scalatest._
 import scodec.bits._
 
@@ -47,7 +47,7 @@ class T1 extends FlatSpec with Matchers {
     assert(Header.Index.Texture.id == 8)
     val lo = h.segments(8)
     assert(lo == (0x02,0x8ff0))
-    //val tc = Utility.decodeChunk(o, h.segments(8), example.TextureDefinition.decoder)
+    //val tc = Utility.decodeChunk(o, h.segments(8), recursive.TextureDefinition.decoder)
     val tc = many(lo._1, TextureDefinition.decoder).decode(o.drop(lo._2*8)).map(_.value.toArray)
     assert(tc.isSuccessful)
     val t1 = tc.require(0)

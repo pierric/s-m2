@@ -1,10 +1,10 @@
-package org.example.gl
+package org.recursive.gl
 
 import java.nio.ByteBuffer
 
 import android.opengl.GLES10
 import android.util.Log
-import org.example._
+import org.recursive._
 import scodec.bits.BitVector
 
 class GLTexture(target: GLTexture.Target.Value, blp: BLP) {
@@ -77,5 +77,8 @@ object GLTexture {
       case Some(t) =>
         Some(t)
     }
+  }
+  def clear(): Unit = {
+    textures.clear()
   }
 }

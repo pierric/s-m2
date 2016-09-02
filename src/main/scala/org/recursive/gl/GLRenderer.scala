@@ -1,10 +1,10 @@
-package org.example.gl
+package org.recursive.gl
 
 import java.util.concurrent.atomic.AtomicInteger
 
 import android.opengl.GLES10
 import android.util.Log
-import org.example._
+import org.recursive._
 
 class GLRenderer(fs: FileSystem, model: M2Model) extends ModelRenderer {
   val mesh = new Mesh(model)

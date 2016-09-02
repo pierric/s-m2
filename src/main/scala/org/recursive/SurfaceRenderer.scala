@@ -1,68 +1,18 @@
-package org.example
+package org.recursive
 
-import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger}
-import java.util.concurrent.{ScheduledThreadPoolExecutor, TimeUnit}
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
-
-import android.app.Activity
-import android.content.Context
 import android.opengl.{GLES10, GLSurfaceView, Matrix}
-import android.os.Bundle
-import android.util.AttributeSet
-import android.view.{MotionEvent, Window, WindowManager}
+import gl.GLTexture
 
-class MainActivity extends Activity with TypedFindView {
-  lazy val textView = findView(TR.text)
-  lazy val surfView = findView(TR.surface)
-
-  val threadpool = new ScheduledThreadPoolExecutor(1)
-
-  lazy val m2Filesystem = new ZipFileSystem(R.raw.res, this)
-  lazy val m2database   = Database(m2Filesystem)
-  lazy val creature     = m2database flatMap { db =>
-    Creature("creature\\cat\\cat", m2Filesystem, db, m2 => new gl.GLRenderer(m2Filesystem, m2))
-  }
-
-  /** Called when the activity is first created. */
-  override def onCreate(savedInstanceState: Bundle): Unit = {
-    super.onCreate(savedInstanceState)
-    requestWindowFeature(Window.FEATURE_NO_TITLE)
-    getWindow.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
-    setContentView(R.layout.main)
-
-    creature.toOption.foreach { cr =>
-      textView.setText("Loaded")
-      surfView.render.setModelRenderer(cr.renderer)
-      GlobalTime.init(threadpool, () => surfView.requestRender())
-//      GlobalTime.pause()
-//      GlobalTime.set(670)
-      cr.setAnim(1)
-      cr.setSkin(5)
-    }
-  }
-}
-
-class MySurfaceView(context: Context, attr: AttributeSet) extends GLSurfaceView(context, attr) {
-  val render = new Renderer
-//  cannot set version to 2, because we use fixed pipeline (1.x)
-//  setEGLContextClientVersion(2)
-  setRenderer(render)
-  setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY)
-
-  override def onTouchEvent(e: MotionEvent): Boolean = {
-    false
-  }
-}
-
-class Renderer extends GLSurfaceView.Renderer {
+class SurfaceRenderer extends GLSurfaceView.Renderer {
 
   private val projMatrix: Array[Float] = Array.ofDim(16)
   private val viewMatrix: Array[Float] = Array.ofDim(16)
-  private var m2Renderer: Option[ModelRenderer] = None
+  private var m2Renderer: List[ModelRenderer] = Nil
 
-  def setModelRenderer(modelRenderer: ModelRenderer): Unit = {
-    m2Renderer = Some(modelRenderer)
+  def addModelRenderer(modelRenderer: ModelRenderer): Unit = {
+    m2Renderer = modelRenderer :: m2Renderer
   }
 
   override def onSurfaceCreated(gl: GL10, config: EGLConfig): Unit = {
@@ -84,6 +34,7 @@ class Renderer extends GLSurfaceView.Renderer {
     GLES10.glEnable(GLES10.GL_LIGHT1)
     GLES10.glEnable(GLES10.GL_LIGHT0)
     GLES10.glEnable(GLES10.GL_LIGHTING)
+    GLTexture.clear()
   }
 
   override def onSurfaceChanged(gl: GL10, width: Int, height: Int): Unit = {
@@ -97,7 +48,6 @@ class Renderer extends GLSurfaceView.Renderer {
   }
 
   override def onDrawFrame(gl: GL10): Unit = {
-//    gl.glClearColor(0.4f, 0.4f, 0.4f, 1.0f)
     gl.glClear(GLES10.GL_COLOR_BUFFER_BIT | GLES10.GL_DEPTH_BUFFER_BIT)
     GLES10.glMatrixMode(GLES10.GL_MODELVIEW)
     Matrix.setLookAtM(viewMatrix, 0, 0.0f, 0.0f, 4.0f, -0.2f, -0.3f, 0.0f, 0.0f, -1.0f, 0.0f)
